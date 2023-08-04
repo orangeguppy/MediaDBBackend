@@ -6,4 +6,5 @@ URI = "neo4j+s://55770697.databases.neo4j.io"
 AUTH = ("neo4j", "D8BcIOw4QIFj-v7E1QgRAm71kcQ0cLlDx_u3pB4YauQ")
 
 with GraphDatabase.driver(URI, auth=AUTH) as driver: 
-    driver.verify_connectivity() 
+    driver.verify_connectivity()
+
