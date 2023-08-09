@@ -1,23 +1,17 @@
-# Driver import
-from neo4j import GraphDatabase
+from connection import Neo4jConnection
 
-class Neo4jClient:
+class Journalist(Neo4jConnection):
     def __init__(self, uri, username, password):
-        self._driver = GraphDatabase.driver(uri, auth=(username, password))
-        self._driver.verify_connectivity() 
+        Neo4jConnection.__init__(self, uri, username, password)
 
-    def close(self):
-        self._driver.close()
-
-    def run_query(self, query, parameters=None):
-        with self._driver.session() as session:
-            result = session.run(query, parameters)
-            return result.data()
-    
     # api/journalists GET Fetch all journalists based on specified tags
-    def find_all_journalists():
-        query = "MATCH (n:journalist) RETURN n"
-        neo4j_client.run_query(query)
+    def find_all_journalists(self, industry_list=None):
+        query = "MATCH (n:journalist"
+        if industry_list:
+            labels = ":".join(industry_list)
+            query += f":{labels}"
+        query += ") RETURN n"
+        return self.run_query(query)
 
     # api/journalists POST Add a new journalist to the database
     def add_journalist(self, first_name, last_name, birthdate, description, email, mobile_num, industries):
@@ -37,10 +31,10 @@ class Neo4jClient:
 # URI examples: "neo4j://localhost", "neo4j+s://xxx.databases.neo4j.io"
 URI = "neo4j+s://55770697.databases.neo4j.io"
 USER = "neo4j"
-AUTH = "D8BcIOw4QIFj-v7E1QgRAm71kcQ0cLlDx_u3pB4YauQ"
+PASSWORD = "D8BcIOw4QIFj-v7E1QgRAm71kcQ0cLlDx_u3pB4YauQ"
 
-neo4j_client = Neo4jClient(URI, USER, AUTH)
-neo4j_client.find_all_journalists()
+neo4j_client = Journalist(URI, USER, PASSWORD)
+result = neo4j_client.find_all_journalists(["fashion"])
 
 # api/journalists/{id} GET Fetch a journalist based on ID
 
